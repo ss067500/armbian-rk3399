@@ -11,7 +11,7 @@ on:
           - v25.11
           - v25.08
           - main
-        default: main
+        default: v25.11
 
       branch:
         description: 'Branch'
@@ -32,7 +32,7 @@ on:
           - cinnamon
           - gnome
           - i3-wm
-        default: cinnamon
+        default: xfce
 
       bspfreeze:
         description: 'Freeze BSP'
