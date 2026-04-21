@@ -21,7 +21,7 @@ on:
           - h339pc
           - fine3399a
           - ad-b03
-        default: "rk-sapphire"
+        default: "h339pc"
 
       version:
         description: 'Armbian Version'
