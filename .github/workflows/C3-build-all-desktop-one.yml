@@ -8,11 +8,10 @@ on:
         required: true
         type: choice
         options:
-          - v26.02
           - v25.11
           - v25.08
           - main
-        default: v26.02
+        default: main
 
       branch:
         description: 'Branch'
@@ -33,7 +32,7 @@ on:
           - cinnamon
           - gnome
           - i3-wm
-        default: xfce
+        default: cinnamon
 
       bspfreeze:
         description: 'Freeze BSP'
