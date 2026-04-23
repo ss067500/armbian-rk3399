@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 /*
  * Copyright (C) 2025 kaixinos <kaixinos@outlook.com>
- * Updated for Linux 6.x+ (6.18) compatibility
  */
 
 /dts-v1/;
@@ -185,6 +184,13 @@
 		clock-names = "ext_clock";
 		pinctrl-names = "default";
 		pinctrl-0 = <&wifi_enable_h>;
+
+		/*
+		 * On the module itself this is one of these (depending
+		 * on the actual card populated):
+		 * - SDIO_RESET_L_WL_REG_ON
+		 * - PDN (power down when low)
+		 */
 		reset-gpios = <&gpio0 RK_PB2 GPIO_ACTIVE_LOW>;
 	};
 };
@@ -204,12 +210,29 @@
 	pmu1830-supply = <&vcc_3v0>;		/* PMUIO2_VDD */
 };
 
-&cpu_l0 { cpu-supply = <&vdd_cpu_l>; };
-&cpu_l1 { cpu-supply = <&vdd_cpu_l>; };
-&cpu_l2 { cpu-supply = <&vdd_cpu_l>; };
-&cpu_l3 { cpu-supply = <&vdd_cpu_l>; };
-&cpu_b0 { cpu-supply = <&vdd_cpu_b>; };
-&cpu_b1 { cpu-supply = <&vdd_cpu_b>; };
+&cpu_l0 {
+	cpu-supply = <&vdd_cpu_l>;
+};
+
+&cpu_l1 {
+	cpu-supply = <&vdd_cpu_l>;
+};
+
+&cpu_l2 {
+	cpu-supply = <&vdd_cpu_l>;
+};
+
+&cpu_l3 {
+	cpu-supply = <&vdd_cpu_l>;
+};
+
+&cpu_b0 {
+	cpu-supply = <&vdd_cpu_b>;
+};
+
+&cpu_b1 {
+	cpu-supply = <&vdd_cpu_b>;
+};
 
 &gpu {
 	status = "okay";
@@ -232,26 +255,12 @@
 	phy-supply = <&vcc3v3_lan>;
 	phy-mode = "rgmii";
 	pinctrl-names = "default";
-	pinctrl-0 = <&rgmii_pins>; /* rgmii_phy_reset moved to MDIO phy node */
+	pinctrl-0 = <&rgmii_pins &rgmii_phy_reset>;
+	snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
+	snps,reset-active-low;
+	snps,reset-delays-us = <0 10000 50000>;
 	tx_delay = <0x28>;
 	rx_delay = <0x1b>;
-	phy-handle = <&rgmii_phy>;
-
-	mdio {
-		compatible = "snps,dwmac-mdio";
-		#address-cells = <1>;
-		#size-cells = <0>;
-
-		rgmii_phy: ethernet-phy@0 {
-			compatible = "ethernet-phy-ieee802.3-c22";
-			reg = <0>;
-			pinctrl-names = "default";
-			pinctrl-0 = <&rgmii_phy_reset>;
-			reset-gpios = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
-			reset-assert-us = <10000>;
-			reset-deassert-us = <50000>;
-		};
-	};
 };
 
 &i2c0 {
@@ -269,7 +278,7 @@
 		clock-output-names = "xin32k", "rk808-clkout2";
 		pinctrl-names = "default";
 		pinctrl-0 = <&pmic_int_l>;
-		system-power-controller; /* Updated from rockchip,system-power-controller */
+		rockchip,system-power-controller;
 		wakeup-source;
 
 		vcc1-supply = <&vcc3v3_sys>;
@@ -463,6 +472,10 @@
 		compatible = "silergy,syr827";
 		reg = <0x40>;
 		fcs,suspend-voltage-selector = <0>;
+		regulator-compatible = "fan53555-reg";
+		//pinctrl-names = "default";
+		//pinctrl-0 = <&vsel1_pin>;
+		//vsel-gpios = <&gpio1 RK_PC2 GPIO_ACTIVE_HIGH>;
 		regulator-name = "vdd_cpu_b";
 		regulator-min-microvolt = <712500>;
 		regulator-max-microvolt = <1500000>;
@@ -480,6 +493,10 @@
 		compatible = "silergy,syr828";
 		reg = <0x41>;
 		fcs,suspend-voltage-selector = <1>;
+		regulator-compatible = "fan53555-reg";
+		//pinctrl-names = "default";
+		//pinctrl-0 = <&vsel2_pin>;
+		//vsel-gpios = <&gpio1 RK_PB6 GPIO_ACTIVE_HIGH>;
 		regulator-name = "vdd_gpu";
 		regulator-min-microvolt = <712500>;
 		regulator-max-microvolt = <1500000>;
@@ -556,6 +573,7 @@
 
 &tsadc {
 	status = "okay";
+
 	/* tshut mode 0:CRU 1:GPIO */
 	rockchip,hw-tshut-mode = <1>;
 	/* tshut polarity 0:LOW 1:HIGH */
@@ -568,14 +586,19 @@
 
 &sdhci {
 	status = "okay";
+	//max-frequency = <150000000>;
 	bus-width = <8>;
 	mmc-hs200-1_8v;
+	//mmc-hs400-1_8v;
+	//mmc-hs400-enhanced-strobe;
+	//keep-power-in-suspend;
 	non-removable;
 };
 
 &sdmmc {
 	status = "okay";
 	clock-frequency = <100000000>;
+	//max-frequency = <150000000>;
 	bus-width = <4>;
 	cap-mmc-highspeed;
 	cap-sd-highspeed;
@@ -610,6 +633,10 @@
 	brcmf: wifi@1 {
 		compatible = "brcm,bcm4329-fmac";
 		reg = <1>;
+		//interrupt-parent = <&gpio0>;
+		////interrupts = <RK_PA3 IRQ_TYPE_LEVEL_HIGH>;	/* WIFI wake Host irq */
+		//interrupts = <RK_PA3 GPIO_ACTIVE_HIGH>;
+		//interrupt-names = "host-wake";
 		pinctrl-names = "default";
 		pinctrl-0 = <&wifi_host_wake_l>;
 	};
@@ -755,6 +782,17 @@
 			rockchip,pins =
 				<1 RK_PC5 RK_FUNC_GPIO &pcfg_pull_up>;
 		};
+/*
+		vsel1_pin: vsel1-pin {
+			rockchip,pins =
+				<1 RK_PC2 RK_FUNC_GPIO &pcfg_pull_down>;
+		};
+
+		vsel2_pin: vsel2-pin {
+			rockchip,pins =
+				<1 RK_PB6 RK_FUNC_GPIO &pcfg_pull_down>;
+		};
+*/
 	};
 
 	sd {
@@ -829,4 +867,12 @@
 	pcie {
 		pcie_drv: pcie-drv {
 			rockchip,pins =
-				<4 RK_PD5 RK_
+				<4 RK_PD5 RK_FUNC_GPIO &pcfg_pull_up>;
+		};
+
+		pcie_3g_drv: pcie-3g-drv {
+			rockchip,pins =
+				<0 RK_PA2 RK_FUNC_GPIO &pcfg_pull_up>;
+		};
+	};
+};
