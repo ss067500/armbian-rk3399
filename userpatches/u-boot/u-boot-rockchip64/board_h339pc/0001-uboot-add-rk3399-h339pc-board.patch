@@ -71,7 +71,6 @@ index 00000000..d3a945de
 +
 +	aliases {
 +		ethernet0 = &gmac;
-+		ethernet1 = &pcie0;
 +		mmc0 = &sdio0;
 +		mmc1 = &sdmmc;
 +		mmc2 = &sdhci;
@@ -644,7 +643,7 @@ index 00000000..d3a945de
 +&pcie0 {
 +	status = "okay";
 +	vpcie3v3-supply = <&vcc3v3_pcie>;
-+	//ep-gpios = <&gpio4 RK_PD3 GPIO_ACTIVE_HIGH>;
++	ep-gpios = <&gpio4 RK_PD3 GPIO_ACTIVE_HIGH>;
 +	num-lanes = <4>;
 +	pinctrl-names = "default";
 +	pinctrl-0 = <&pcie_clkreqn_cpm>;
