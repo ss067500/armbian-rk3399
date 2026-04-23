@@ -94,7 +94,6 @@ index 00000000..d3a945de
 +		stdout-path = "serial2:1500000n8";
 +	};
 +
-+	/* --- Power Tree --- */
 +	dc_12v: dc-12v {
 +		compatible = "regulator-fixed";
 +		regulator-name = "dc_12v";
@@ -356,7 +355,7 @@ index 00000000..d3a945de
 +};
 diff --git a/configs/h339pc-rk3399_defconfig b/configs/h339pc-rk3399_defconfig
 new file mode 100644
-index 00000000..abcdef12
+index 00000000..f1e2d3c4
 --- /dev/null
 +++ b/configs/h339pc-rk3399_defconfig
 @@ -0,0 +1,85 @@
@@ -416,9 +415,4 @@ index 00000000..abcdef12
 +CONFIG_ETH_DESIGNWARE=y
 +CONFIG_GMAC_ROCKCHIP=y
 +CONFIG_POWER_DOMAIN=y
-+CONFIG_DM_PMIC=y
-+CONFIG_PMIC_RK8XX=y
-+CONFIG_SPL_DM_PMIC=y
-+CONFIG_SPL_PMIC_RK8XX=y
-+CONFIG_DM_REGULATOR_FIXED=y
-+CONFIG
++CONFIG_DM_PMIC
