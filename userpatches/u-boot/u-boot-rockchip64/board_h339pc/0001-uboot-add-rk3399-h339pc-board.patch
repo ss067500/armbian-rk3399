@@ -220,7 +220,7 @@ index 00000000..d3a945de
 +		/* USER_LED */
 +		led-0 {
 +			label = "led:work";
-+			gpios = <&gpio0 RK_PB5 GPIO_ACTIVE_HIGH>;
++			gpios = <&gpio0 RK_PB4 GPIO_ACTIVE_HIGH>;
 +			default-state = "on";
 +			linux,default-trigger = "heartbeat";
 +		};
