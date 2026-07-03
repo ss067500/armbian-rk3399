@@ -824,7 +824,7 @@
 	leds {
 		user_led0: user-led0 {
 			rockchip,pins =
-				<0 RK_PB5 RK_FUNC_GPIO &pcfg_pull_none>;
+				<0 RK_PB4 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 	};
 
